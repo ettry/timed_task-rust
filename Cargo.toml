@@ -1,0 +1,8 @@
+[package]
+name = "time_event"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dirs = "6.0.0"
+notify = "5.0.0"

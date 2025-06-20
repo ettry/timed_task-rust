@@ -1,0 +1,68 @@
+use std::fs::File;
+use std::io::{self, BufRead, BufReader};
+use std::thread;
+use std::time::Duration;
+
+fn main() -> io::Result<()> {
+    let config_path = dirs::home_dir()
+        .expect("你有家吗?你有没有家啊!!回答我!!look at my eyes")
+        .join(".config/time_event.datafile");
+    let file = File::open(config_path)?;
+    let reader = BufReader::new(file);
+    let mut jsq = 0;
+    let mut new_line: Vec<String> = Vec::new();
+    for line in reader.split(b'\n') {
+        let line = line?;
+        let line = String::from_utf8_lossy(&line);
+        new_line.push(line.to_string());
+        let event_time: Vec<&str> = line.split_whitespace().collect();
+        if event_time.len() > 5 {
+            let mut tem = 0;
+            if event_time[0] != "*" {
+                let num = match event_time[0].parse::<i32>() {
+                    Ok(n) => n,
+                    Err(_) => {
+                        // 处理错误，比如跳过本次循环或输出提示
+                        continue;
+                    }
+                };
+                tem += num;
+            } else if event_time[1] != "*" && event_time[2] != "*" {
+                tem = 1;
+            }
+            if event_time[1] != "*" {
+                let num = match event_time[0].parse::<i32>() {
+                    Ok(n) => n,
+                    Err(_) => {
+                        // 处理错误，比如跳过本次循环或输出提示
+                        continue;
+                    }
+                };
+                tem += num * 60;
+            }
+            if event_time[2] != "*" {
+                let num = match event_time[0].parse::<i32>() {
+                    Ok(n) => n,
+                    Err(_) => {
+                        // 处理错误，比如跳过本次循环或输出提示
+                        continue;
+                    }
+                };
+                tem += num * 1440; //24*60
+            }
+            new_line[jsq].push_str(&format!(" {}", tem));
+        }
+        jsq += 1;
+    }
+    let mut file = File::create(&config_path)?;
+    for line in new_line {
+        writeln!(config_path, "{line}")?;
+    }
+    loop {
+        // 你的代码
+        println!("执行一次");
+
+        // 暂停5分钟
+        thread::sleep(Duration::from_secs(300));
+    }
+}
