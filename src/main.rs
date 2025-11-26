@@ -1,6 +1,6 @@
 //更精确的时间休眠 ✔️
 //固定时间扩展到秒分时天月 ✔️
-//间隔时间扩展到秒分时天 ✔️
+//间隔时间扩展到秒分时天月 ✔️
 //间隔时间可以设置是否立即运行命令 ✔️
 //修bug ✔️
 //未找到文件时创建文件 ✔️
@@ -212,7 +212,7 @@ fn load_config(config_path: &PathBuf) -> io::Result<Vec<String>> {
                 )?;
                 writeln!(file, "# 固定时间格式为 :  天:时:分:秒(无空格)   命令")?;
                 writeln!(file, "# 固定时间其他格式为 时:分:秒 / 分:秒 / 秒")?;
-                writeln!(file, "# 例: : 30:15 ~/sh/hellorust.sh")?;
+                writeln!(file, "# 例: 30:15 ~/sh/hellorust.sh")?;
                 writeln!(file, "# 每个30分15秒运行 ~/sh/hellorust.sh 文件")?;
 
                 eprintln!("已创建新的配置文件并写入默认内容");
@@ -254,6 +254,7 @@ fn local_time_in(event_time: &str) -> bool {
         1 => Local::now().format("%M:%S"),
         2 => Local::now().format("%H:%M:%S"),
         3 => Local::now().format("%d:%H:%M:%S"),
+        4 => Local::now().format("%m:%d:%H:%M:%S"),
         _ => return local_time_bool,
     };
     if local_time.to_string() == event_time {
