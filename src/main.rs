@@ -6,7 +6,7 @@
 //未找到文件时创建文件 ✔️
 //收集错误转储为日志 ✔️
 //添加固定时间运行在软件启动时是否根据条件运行✔️
-//文本更新✔️
+//文本更新
 
 use chrono::{DateTime, Local};
 use gag::Redirect;
@@ -317,10 +317,18 @@ fn load_config(config_path: &PathBuf) -> io::Result<Vec<String>> {
 fn command(event_time_str: &str, sh: &str) {
     let escaped_input_path = event_time_str.replace("'", "'\\''");
     let mut cmd = Command::new(sh);
-    cmd.arg("-e");
-    cmd.arg("-c");
+
+    // 💡 关键改动：如果是 fish，不传递 "-e" 参数
+    if sh.contains("fish") {
+        cmd.arg("-c");
+    } else {
+        cmd.arg("-e");
+        cmd.arg("-c");
+    }
+
     cmd.arg(&escaped_input_path);
     cmd.stdin(Stdio::null());
+
     if let Err(e) = cmd.spawn() {
         eprintln!("执行命令失败: {}", e);
     }
